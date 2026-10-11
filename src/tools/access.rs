@@ -237,9 +237,20 @@ impl Walker {
 		})
 	}
 
+	fn take_budget(&self) -> bool {
+		let mut left = self.budget.load(Ordering::SeqCst);
+		while left > 0 {
+			match self.budget.compare_exchange_weak(left, left - 1, Ordering::SeqCst, Ordering::SeqCst) {
+				Ok(_) => return true,
+				Err(current) => left = current,
+			}
+		}
+		false
+	}
+
 	fn walk<'a>(&'a self, target: Target, depth: u32, top: bool) -> futures_util::future::BoxFuture<'a, Option<Node>> {
 		Box::pin(async move {
-			if self.budget.fetch_update(Ordering::SeqCst, Ordering::SeqCst, |left| left.checked_sub(1)).is_err() {
+			if !self.take_budget() {
 				return None;
 			}
 			let (role, name, description, words, interfaces) = tokio::join!(
