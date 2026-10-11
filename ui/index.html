@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+	<title>Ash Agent</title>
+	<link rel="icon" href="logo.png">
+	<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+	<div id="app" class="app" data-crashed="false">
+		<aside id="sidebar" class="sidebar" aria-label="Chats">
+			<header class="sidebar-head">
+				<button type="button" id="sidebar-toggle" class="icon-button" aria-label="Hide the sidebar" title="Hide sidebar (Ctrl+B)">
+					<span class="icon" data-icon="panel"></span>
+				</button>
+				<div class="mark-row">
+					<img class="mark" src="logo.png" alt="" width="28" height="28">
+					<div class="mark-text">
+						<span class="wordmark">Ash Agent</span>
+						<span class="wordmark-sub">Ember's assistant</span>
+					</div>
+				</div>
+			</header>
+			<div class="sidebar-actions">
+				<button type="button" id="new-chat" class="primary-button wide">
+					<span class="icon" data-icon="plus"></span>
+					<span>New chat</span>
+					<kbd class="kbd">Ctrl N</kbd>
+				</button>
+			</div>
+			<div class="search-row">
+				<span class="icon search-icon" data-icon="search"></span>
+				<input id="search-input" class="search-input" type="search" placeholder="Search chats" aria-label="Search chats" autocomplete="off" spellcheck="false">
+				<button type="button" id="search-clear" class="icon-button tiny hidden" aria-label="Clear search"><span class="icon" data-icon="close"></span></button>
+			</div>
+			<div id="search-note" class="search-note hidden" role="status" aria-live="polite"></div>
+			<nav id="conversation-list" class="conversation-list" aria-label="Conversation history"></nav>
+			<footer class="sidebar-foot">
+				<button type="button" id="model-chip" class="model-chip" aria-haspopup="dialog" aria-label="Choose a model">
+					<span class="status-dot" id="provider-dot" data-state="unknown"></span>
+					<span class="model-chip-text" id="model-chip-text">No model selected</span>
+					<span class="icon" data-icon="chevron"></span>
+				</button>
+				<div class="mode-switch" role="radiogroup" aria-label="Assistant mode">
+					<button type="button" class="mode-option" data-mode="chat" role="radio" aria-checked="false">Chat</button>
+					<button type="button" class="mode-option" data-mode="helper" role="radio" aria-checked="false">Helper</button>
+				</div>
+				<div class="sidebar-links">
+					<button type="button" id="open-models" class="ghost-button small"><span class="icon" data-icon="cpu"></span><span>Models</span></button>
+					<button type="button" id="open-settings" class="ghost-button small"><span class="icon" data-icon="sliders"></span><span>Settings</span></button>
+				</div>
+			</footer>
+		</aside>
+
+		<main id="main" class="main">
+			<header id="chat-head" class="chat-head">
+				<button type="button" id="sidebar-show" class="icon-button hidden" aria-label="Show the sidebar" title="Show sidebar (Ctrl+B)">
+					<span class="icon" data-icon="panel"></span>
+				</button>
+				<button type="button" id="title-button" class="title-button" title="Rename this chat">
+					<span id="chat-title">New chat</span>
+				</button>
+				<div class="chat-head-meta">
+					<span id="head-model" class="chip chip-model" title="Model in use">no model</span>
+					<span id="head-helper" class="chip chip-helper hidden">
+						<span class="icon" data-icon="shield"></span>
+						<span id="head-helper-text">Helper</span>
+					</span>
+				</div>
+				<div class="chat-head-actions">
+					<button type="button" id="tier-button" class="chip chip-tier hidden" aria-label="Change the permission tier" title="Change the permission tier"></button>
+					<button type="button" id="open-terminal" class="icon-button" aria-label="Open the terminal" title="Terminal">
+						<span class="icon" data-icon="terminal"></span>
+					</button>
+					<button type="button" id="open-actions" class="icon-button" aria-label="Open the action log" title="Action log">
+						<span class="icon" data-icon="list"></span>
+					</button>
+					<button type="button" id="clear-from-here" class="icon-button" aria-label="Delete everything from here on" title="Delete messages from here on">
+						<span class="icon" data-icon="eraser"></span>
+					</button>
+				</div>
+			</header>
+
+			<nav id="view-tabs" class="view-tabs" aria-label="Views">
+				<button type="button" class="tab" data-view="chat" aria-current="page">Chat</button>
+				<button type="button" class="tab" data-view="models">Models</button>
+				<button type="button" class="tab" data-view="actions">Actions</button>
+				<button type="button" class="tab" data-view="settings">Settings</button>
+			</nav>
+
+			<section id="view-chat" class="view view-chat" data-view="chat">
+				<div class="transcript-wrap">
+					<div id="transcript" class="transcript" role="log" aria-live="polite" aria-relevant="additions text" tabindex="0"></div>
+					<button type="button" id="jump-latest" class="jump-latest hidden">
+						<span class="icon" data-icon="down"></span>
+						<span>Jump to latest</span>
+					</button>
+				</div>
+				<div class="composer-shell">
+					<div id="composer-alert" class="inline-alert hidden" role="alert"></div>
+					<div id="attach-strip" class="attach-strip hidden" aria-label="Attached images"></div>
+					<div id="composer" class="composer">
+						<textarea id="composer-input" class="composer-input" rows="1" placeholder="Ask anything, or describe what you want to do…" aria-label="Message" spellcheck="true"></textarea>
+						<div class="composer-bar">
+							<div class="composer-bar-left">
+								<button type="button" id="attach-button" class="icon-button" aria-label="Attach an image" title="Attach an image">
+									<span class="icon" data-icon="image"></span>
+								</button>
+								<button type="button" id="think-button" class="toggle-button" aria-pressed="false" aria-label="Ask the model to think first" title="Think first">
+									<span class="icon" data-icon="brain"></span>
+									<span>Think</span>
+								</button>
+								<button type="button" id="composer-model" class="ghost-button small" aria-label="Choose a model" title="Choose a model">
+									<span class="icon" data-icon="cpu"></span>
+									<span id="composer-model-text">no model</span>
+								</button>
+								<span id="send-hint" class="send-hint"></span>
+							</div>
+							<div class="composer-bar-right">
+								<button type="button" id="stop-button" class="danger-button hidden" aria-label="Stop generating">
+									<span class="icon" data-icon="stop"></span>
+									<span>Stop</span>
+								</button>
+								<button type="button" id="send-button" class="primary-button send-button" aria-label="Send message">
+									<span class="icon" data-icon="send"></span>
+									<span>Send</span>
+								</button>
+							</div>
+						</div>
+					</div>
+					<p class="composer-note"><span id="composer-hint-text">Enter sends, Shift and Enter adds a line.</span></p>
+				</div>
+			</section>
+
+			<section id="view-models" class="view view-models hidden" data-view="models" aria-label="Models"></section>
+			<section id="view-actions" class="view view-actions hidden" data-view="actions" aria-label="Action log"></section>
+			<section id="view-settings" class="view view-settings hidden" data-view="settings" aria-label="Settings"></section>
+		</main>
+
+		<aside id="terminal-panel" class="terminal-panel hidden" aria-label="Terminal">
+			<header class="panel-head">
+				<div class="panel-title">
+					<span class="icon" data-icon="terminal"></span>
+					<span>Terminal</span>
+				</div>
+				<div class="panel-head-actions">
+					<select id="session-select" class="select compact" aria-label="Open terminal sessions"></select>
+					<button type="button" id="session-new" class="ghost-button small">New session</button>
+					<button type="button" id="session-stop" class="ghost-button small danger-text">Close</button>
+					<button type="button" id="terminal-close" class="icon-button" aria-label="Hide the terminal"><span class="icon" data-icon="close"></span></button>
+				</div>
+			</header>
+			<div id="terminal-output" class="terminal-output" role="log" aria-live="polite"></div>
+			<form id="terminal-form" class="terminal-input-row">
+				<span class="terminal-prompt" aria-hidden="true">$</span>
+				<input id="terminal-input" class="terminal-input" type="text" autocomplete="off" spellcheck="false" aria-label="Terminal input" placeholder="Type a command and press Enter">
+			</form>
+		</aside>
+	</div>
+
+	<div id="sidebar-scrim" class="scrim hidden"></div>
+	<div id="overlay-root" class="overlay-root hidden"></div>
+	<div id="lightbox" class="lightbox hidden" aria-label="Image preview">
+		<img id="lightbox-image" alt="Screenshot preview">
+		<button type="button" id="lightbox-close" class="icon-button lightbox-close" aria-label="Close the preview"><span class="icon" data-icon="close"></span></button>
+	</div>
+	<div id="toasts" class="toasts" aria-live="assertive" aria-atomic="false"></div>
+	<div id="onboarding-root" class="onboarding hidden"></div>
+	<script type="module" src="app.js"></script>
+</body>
+</html>

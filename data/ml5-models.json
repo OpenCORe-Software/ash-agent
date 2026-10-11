@@ -1,0 +1,102 @@
+{
+	"featured": [
+		{
+			"reference": "OpenCOReTechnologies/CORe-Pico-4-GGUF",
+			"name": "CORe Pico 4",
+			"description": "The newest model from CORe Technologies, the makers of Ember. Small and quick, holds a conversation well and can use the helper's tools.",
+			"size": "~1.1 GB",
+			"tags": ["opencore", "small", "tools"],
+			"registry": "hf"
+		},
+		{
+			"reference": "OpenCOReTechnologies/CORe-Pico-V3",
+			"name": "CORe Pico V3",
+			"description": "The previous Pico from CORe Technologies. Steady in long conversations and can think step by step when you ask it to.",
+			"size": "~1.1 GB",
+			"tags": ["opencore", "small", "reasoning", "tools"],
+			"registry": "hf"
+		},
+		{
+			"reference": "LiquidAI/LFM2.5-1.2B-Instruct-GGUF",
+			"name": "LFM2.5 1.2B",
+			"description": "Liquid AI's small all-rounder. Very fast even without a graphics card, and a good first model for older computers.",
+			"size": "~0.7 GB",
+			"tags": ["small", "fast", "tools"],
+			"registry": "hf"
+		},
+		{
+			"reference": "LiquidAI/LFM2.5-VL-1.6B-GGUF",
+			"name": "LFM2.5 VL 1.6B",
+			"description": "Looks at pictures and screenshots. Pick this when you want Ash to read what is on the screen or describe an image.",
+			"size": "~1.6 GB",
+			"tags": ["vision", "small"],
+			"registry": "hf"
+		},
+		{
+			"reference": "LiquidAI/LFM2.5-2.6B-GGUF",
+			"name": "LFM2.5 2.6B",
+			"description": "A noticeable step up in quality while still running comfortably on an ordinary laptop.",
+			"size": "~1.7 GB",
+			"tags": ["balanced", "tools"],
+			"registry": "hf"
+		},
+		{
+			"reference": "unsloth/Qwen3.5-4B-GGUF",
+			"name": "Qwen3.5 4B",
+			"description": "Alibaba's well-known small model. Strong at reasoning and tool use, and it can also look at pictures.",
+			"size": "~3.4 GB",
+			"tags": ["reasoning", "vision", "tools"],
+			"registry": "hf"
+		}
+	],
+	"advanced": [
+		{
+			"reference": "LiquidAI/LFM2.5-350M-GGUF",
+			"name": "LFM2.5 350M",
+			"description": "Tiny and instant. Fine for quick questions on very weak hardware, but expect simple answers.",
+			"size": "~0.25 GB",
+			"tags": ["tiny", "fast"],
+			"registry": "hf"
+		},
+		{
+			"reference": "LiquidAI/LFM2.5-1.2B-Thinking-GGUF",
+			"name": "LFM2.5 1.2B Thinking",
+			"description": "The small Liquid AI model trained to think before it answers. Slower, but better at puzzles and maths.",
+			"size": "~0.7 GB",
+			"tags": ["small", "reasoning"],
+			"registry": "hf"
+		},
+		{
+			"reference": "unsloth/Qwen3.5-0.8B-GGUF",
+			"name": "Qwen3.5 0.8B",
+			"description": "The smallest Qwen3.5. Can look at pictures even on low-memory machines.",
+			"size": "~0.7 GB",
+			"tags": ["tiny", "vision"],
+			"registry": "hf"
+		},
+		{
+			"reference": "unsloth/Qwen3.5-2B-GGUF",
+			"name": "Qwen3.5 2B",
+			"description": "A middle ground between speed and quality, with picture support.",
+			"size": "~2 GB",
+			"tags": ["small", "vision", "tools"],
+			"registry": "hf"
+		},
+		{
+			"reference": "LiquidAI/LFM2.5-8B-A1B-GGUF",
+			"name": "LFM2.5 8B-A1B",
+			"description": "A larger mixture-of-experts model that only wakes a small part of itself per word, so it stays fast. Wants around 6 GB of free memory.",
+			"size": "~5.2 GB",
+			"tags": ["smarter", "fast", "tools"],
+			"registry": "hf"
+		},
+		{
+			"reference": "unsloth/Qwen3.5-9B-GGUF",
+			"name": "Qwen3.5 9B",
+			"description": "The best quality here and the heaviest. Needs roughly 8 GB of free memory, ideally on a graphics card.",
+			"size": "~6.6 GB",
+			"tags": ["largest", "reasoning", "vision", "tools"],
+			"registry": "hf"
+		}
+	]
+}

@@ -1,0 +1,21 @@
+{
+	"$schema": "https://schema.tauri.app/config/2",
+	"productName": "Ash Agent",
+	"version": "1.0.0",
+	"identifier": "one.opencore.AshAgent",
+	"build": {
+		"frontendDist": "ui"
+	},
+	"app": {
+		"withGlobalTauri": true,
+		"windows": [],
+		"security": {
+			"csp": "default-src 'self'; img-src 'self' data: blob: ash: http://ash.localhost; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src ipc: http://ipc.localhost; font-src 'self' data:"
+		}
+	},
+	"bundle": {
+		"active": false,
+		"targets": "all",
+		"icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.png"]
+	}
+}
