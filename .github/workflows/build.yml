@@ -9,7 +9,7 @@ on:
 
 concurrency:
   group: build-${{ github.ref }}
-  cancel-in-progress: true
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 permissions:
   contents: read
@@ -49,6 +49,8 @@ jobs:
     name: Build (x86_64 Linux)
     runs-on: ubuntu-26.04
     needs: check
+    outputs:
+      tag: ${{ steps.version.outputs.tag }}
     steps:
       - uses: actions/checkout@v7
 
@@ -64,21 +66,71 @@ jobs:
 
       - uses: Swatinem/rust-cache@v2
 
+      - name: Determine the release tag
+        id: version
+        run: |
+          if [ "$GITHUB_REF_TYPE" = "tag" ]; then
+            tag="$GITHUB_REF_NAME"
+          else
+            version=$(cargo metadata --locked --no-deps --format-version 1 | jq -r '.packages[] | select(.name == "ash-agent") | .version')
+            [ -n "$version" ] || { echo "Could not read the package version" >&2; exit 1; }
+            tag="v${version}-build.${GITHUB_RUN_NUMBER}"
+          fi
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+
       - name: Build release binaries
         run: cargo build --locked --release --bins
 
       - name: Package
         run: |
-          name="ash-agent-${GITHUB_SHA::7}-x86_64-linux"
+          name="ash-agent-${{ steps.version.outputs.tag }}-x86_64-linux"
           mkdir -p "dist/$name"
           cp target/release/ash-agent target/release/ash-agent-root "dist/$name/"
           cp -r icons "dist/$name/"
           tar -C dist -czf "dist/$name.tar.gz" "$name"
-          echo "PACKAGE=dist/$name.tar.gz" >> "$GITHUB_ENV"
+          (cd dist && sha256sum "$name.tar.gz" > "$name.tar.gz.sha256")
 
       - uses: actions/upload-artifact@v7
         with:
           name: ash-agent-x86_64-linux
-          path: ${{ env.PACKAGE }}
+          path: |
+            dist/*.tar.gz
+            dist/*.tar.gz.sha256
           if-no-files-found: error
           retention-days: 30
+
+  release:
+    name: Release
+    runs-on: ubuntu-26.04
+    needs: build
+    if: github.event_name == 'push'
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/download-artifact@v8
+        with:
+          name: ash-agent-x86_64-linux
+          path: dist
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          TAG: ${{ needs.build.outputs.tag }}
+          DEFAULT_BRANCH: ${{ github.event.repository.default_branch }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" dist/* --clobber
+            exit 0
+          fi
+          flags=()
+          if [ "$GITHUB_REF_TYPE" = "tag" ] || [ "$GITHUB_REF_NAME" = "$DEFAULT_BRANCH" ]; then
+            flags+=(--latest)
+          else
+            flags+=(--prerelease --latest=false)
+          fi
+          gh release create "$TAG" dist/* \
+            --target "$GITHUB_SHA" \
+            --title "Ash Agent $TAG" \
+            --generate-notes \
+            "${flags[@]}"
